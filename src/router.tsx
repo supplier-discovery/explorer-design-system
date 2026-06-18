@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom"
+import { createHashRouter } from "react-router-dom"
 import PortalLayout from "@/layouts/PortalLayout"
 import OverviewPage from "@/pages/OverviewPage"
 import ButtonPage from "@/pages/ButtonPage"
@@ -13,7 +13,7 @@ import PlaceholderPage from "@/pages/PlaceholderPage"
 // Routes are ordered from most-specific to least-specific.
 // The catch-all /components/:slug always renders PlaceholderPage for unimplemented components.
 
-export const router = createBrowserRouter([
+export const router = createHashRouter([
   {
     path: "/",
     element: <PortalLayout />,

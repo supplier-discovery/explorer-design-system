@@ -1,0 +1,23 @@
+# Build output — never commit, GitHub Actions builds this
+dist/
+
+# Dependencies — install via npm install
+node_modules/
+
+# Local env files
+.env
+.env.local
+.env.*.local
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vite / TypeScript cache
+*.tsbuildinfo
+vite.config.ts.timestamp-*

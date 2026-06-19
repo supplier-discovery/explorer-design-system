@@ -55,7 +55,7 @@ export function ComponentLayout({
   children,
 }: ComponentLayoutProps) {
   return (
-    <div className="mx-auto max-w-4xl px-6 py-8 space-y-6 lg:px-8">
+    <div className="w-full px-6 py-8 space-y-6 lg:px-8">
       {/* Page header: breadcrumb + title/desc on left, badges on right */}
       <header className="space-y-3">
         <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-muted-foreground">

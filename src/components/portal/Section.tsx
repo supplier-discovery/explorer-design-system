@@ -13,14 +13,20 @@ interface SectionProps {
 
 export function Section({ title, description, children, className }: SectionProps) {
   return (
-    <section className={cn("rounded-xl bg-background dark:bg-card shadow-elevation-3 p-6 space-y-5", className)}>
-      <div className="space-y-1 border-l-4 border-warning pl-4">
-        <h2 className="text-xl font-semibold text-foreground">{title}</h2>
-        {description && (
-          <p className="text-sm text-muted-foreground">{description}</p>
-        )}
+    <section className={cn("rounded-xl bg-background dark:bg-card shadow-elevation-3 overflow-hidden", className)}>
+      {/* Full-width header with bottom border */}
+      <div className="px-6 py-4 border-b border-border">
+        <div className="border-l-4 border-warning pl-4 space-y-1">
+          <h2 className="text-xl font-semibold text-foreground">{title}</h2>
+          {description && (
+            <p className="text-sm text-muted-foreground">{description}</p>
+          )}
+        </div>
       </div>
-      {children}
+      {/* Content area */}
+      <div className="p-6 space-y-5">
+        {children}
+      </div>
     </section>
   )
 }

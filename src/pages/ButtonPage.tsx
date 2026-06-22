@@ -490,7 +490,6 @@ export default function ButtonPage() {
                   <Button variant="link" color="warning" size="lg">Warning</Button>
                   <Button variant="link" color="danger" size="lg">Danger</Button>
                   <Button variant="link" color="neutral" size="lg">Neutral</Button>
-                  <input type="" />
                 </div>
               </div>
             </div>

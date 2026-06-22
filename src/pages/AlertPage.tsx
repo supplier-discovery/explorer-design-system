@@ -1,106 +1,65 @@
 import { useState } from "react"
 import { X, Info, CheckCircle2, AlertTriangle, XCircle } from "lucide-react"
-import { cn } from "@/lib/utils"
+import {
+  Alert,
+  AlertTitle,
+  AlertDescription,
+} from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
 import { ComponentLayout, InfoGrid } from "@/components/portal/ComponentLayout"
 import { Section, DosDonts, PropsTable, KeyboardTable } from "@/components/portal/Section"
-import { PreviewBox, PreviewRow } from "@/components/portal/PreviewBox"
 import { CodeTabs } from "@/components/portal/CodeBlock"
-
-// ─── Inline Alert ─────────────────────────────────────────────────────────────
-
-type AlertVariant = "info" | "success" | "warning" | "error"
-
-const alertConfig: Record<AlertVariant, {
-  icon: React.ComponentType<{ className?: string }>
-  classes: string
-  iconClasses: string
-}> = {
-  info:    { icon: Info,          classes: "border-primary/20 bg-primary/5",  iconClasses: "text-primary"   },
-  success: { icon: CheckCircle2,  classes: "border-success/20 bg-success/5",  iconClasses: "text-success"   },
-  warning: { icon: AlertTriangle, classes: "border-warning/20 bg-warning/5",  iconClasses: "text-warning"   },
-  error:   { icon: XCircle,       classes: "border-error/20 bg-error/5",      iconClasses: "text-error"     },
-}
-
-interface AlertProps {
-  variant?: AlertVariant
-  title?: string
-  children: React.ReactNode
-  dismissible?: boolean
-  onDismiss?: () => void
-  className?: string
-}
-
-function Alert({ variant = "info", title, children, dismissible, onDismiss, className }: AlertProps) {
-  const { icon: Icon, classes, iconClasses } = alertConfig[variant]
-  return (
-    <div
-      role="alert"
-      className={cn(
-        "flex items-start gap-3 rounded-xl border p-4",
-        classes,
-        className
-      )}
-    >
-      <Icon className={cn("mt-0.5 h-5 w-5 shrink-0", iconClasses)} aria-hidden="true" />
-      <div className="flex-1 min-w-0">
-        {title && <p className="text-sm font-semibold text-foreground">{title}</p>}
-        <div className={cn("text-sm text-muted-foreground", title && "mt-0.5")}>
-          {children}
-        </div>
-      </div>
-      {dismissible && (
-        <button
-          type="button"
-          onClick={onDismiss}
-          aria-label="Dismiss alert"
-          className="shrink-0 rounded-md p-1 text-muted-foreground transition-colors hover:bg-background hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-        >
-          <X className="h-4 w-4" />
-        </button>
-      )}
-    </div>
-  )
-}
 
 // ─── Code examples ────────────────────────────────────────────────────────────
 
-const reactCode = `import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Terminal, Info, CheckCircle2, AlertTriangle, XCircle } from "lucide-react"
+const shadcnCode = `// Install: npx shadcn@latest add alert
+// Then extend alert.tsx with semantic variants (info/success/warning/error).
+
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
+import { Info, CheckCircle2, AlertTriangle, XCircle } from "lucide-react"
 
 // Info
-<Alert>
+<Alert variant="info">
   <Info className="h-4 w-4" />
-  <AlertTitle>Heads up</AlertTitle>
+  <AlertTitle>New feature available</AlertTitle>
   <AlertDescription>
-    You can add components to your app using the CLI.
+    The new dashboard is now in beta. Enable it in Settings → Beta Features.
   </AlertDescription>
 </Alert>
 
 // Success
-<Alert className="border-success/20 bg-success/5">
-  <CheckCircle2 className="h-4 w-4 text-success" />
+<Alert variant="success">
+  <CheckCircle2 className="h-4 w-4" />
   <AlertTitle>Payment successful</AlertTitle>
-  <AlertDescription>Your order has been confirmed. Check your email for details.</AlertDescription>
+  <AlertDescription>
+    Your subscription has been renewed. Next billing date: July 17, 2026.
+  </AlertDescription>
 </Alert>
 
 // Warning
-<Alert className="border-warning/20 bg-warning/5">
-  <AlertTriangle className="h-4 w-4 text-warning" />
-  <AlertTitle>Approaching limit</AlertTitle>
-  <AlertDescription>You've used 90% of your monthly quota.</AlertDescription>
+<Alert variant="warning">
+  <AlertTriangle className="h-4 w-4" />
+  <AlertTitle>Approaching usage limit</AlertTitle>
+  <AlertDescription>
+    You've used 90% of your monthly API quota.
+  </AlertDescription>
 </Alert>
 
-// Error / Destructive
-<Alert variant="destructive">
+// Error
+<Alert variant="error">
   <XCircle className="h-4 w-4" />
-  <AlertTitle>Error</AlertTitle>
-  <AlertDescription>Something went wrong. Please try again.</AlertDescription>
+  <AlertTitle>Export failed</AlertTitle>
+  <AlertDescription>
+    We couldn't process your export. Check your network and try again.
+  </AlertDescription>
 </Alert>
 
-// Without title (inline)
-<Alert>
+// Without title (inline message)
+<Alert variant="info">
   <Info className="h-4 w-4" />
-  <AlertDescription>This action cannot be undone.</AlertDescription>
+  <AlertDescription>
+    This action will permanently delete the record and cannot be undone.
+  </AlertDescription>
 </Alert>`
 
 const tailwindCode = `{/* Info */}
@@ -121,38 +80,61 @@ const tailwindCode = `{/* Info */}
   </div>
 </div>
 
-{/* Dismissible */}
+{/* Warning */}
 <div role="alert" className="flex items-start gap-3 rounded-xl border border-warning/20 bg-warning/5 p-4">
   <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
-  <div className="flex-1">
-    <p className="text-sm text-muted-foreground">Action required before your trial ends.</p>
+  <div>
+    <p className="text-sm font-semibold text-foreground">Approaching usage limit</p>
+    <p className="mt-0.5 text-sm text-muted-foreground">You've used 90% of your monthly API quota.</p>
   </div>
-  <button aria-label="Dismiss" className="rounded-md p-1 text-muted-foreground hover:bg-background">
-    <X className="h-4 w-4" />
-  </button>
+</div>
+
+{/* Error */}
+<div role="alert" className="flex items-start gap-3 rounded-xl border border-error/20 bg-error/5 p-4">
+  <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-error" />
+  <div>
+    <p className="text-sm font-semibold text-foreground">Export failed</p>
+    <p className="mt-0.5 text-sm text-muted-foreground">Check your network and try again.</p>
+  </div>
+</div>
+
+{/* Without title */}
+<div role="alert" className="flex items-start gap-3 rounded-xl border border-primary/20 bg-primary/5 p-4">
+  <Info className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+  <p className="text-sm text-muted-foreground">This action will permanently delete the record and cannot be undone.</p>
 </div>`
 
-const shadcnInstall = `# Install alert component
-npx shadcn@latest add alert
+const dismissibleCode = `// Dismissible — manage visibility with state
+import { useState } from "react"
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
+import { AlertTriangle, X } from "lucide-react"
 
-# Usage
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Terminal } from "lucide-react"
-
-<Alert>
-  <Terminal className="h-4 w-4" />
-  <AlertTitle>Heads up!</AlertTitle>
-  <AlertDescription>
-    You can add components and dependencies to your app using the CLI.
-  </AlertDescription>
-</Alert>`
+function DismissibleAlert() {
+  const [visible, setVisible] = useState(true)
+  if (!visible) return null
+  return (
+    <Alert variant="warning" className="pr-10">
+      <AlertTriangle className="h-4 w-4" />
+      <AlertTitle>Action required</AlertTitle>
+      <AlertDescription>Your trial ends in 3 days.</AlertDescription>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => setVisible(false)}
+        aria-label="Dismiss"
+        className="absolute right-2 top-2 h-8 w-8 text-muted-foreground hover:bg-background hover:text-foreground"
+      >
+        <X className="h-4 w-4" />
+      </Button>
+    </Alert>
+  )
+}`
 
 // ─── AlertPage ────────────────────────────────────────────────────────────────
 
 export default function AlertPage() {
-  const [dismissed, setDismissed] = useState<Record<string, boolean>>({})
-
-  const dismiss = (id: string) => setDismissed((prev) => ({ ...prev, [id]: true }))
+  const [dismissed, setDismissed] = useState(false)
 
   return (
     <ComponentLayout
@@ -169,6 +151,33 @@ export default function AlertPage() {
         { label: "WCAG",     value: "AA 2.2"                               },
       ]} />
 
+      {/* Component API */}
+      <Section title="Component API">
+        <div className="rounded-xl border border-border overflow-hidden text-sm">
+          <div className="bg-neutral-50 dark:bg-neutral-900 px-5 py-3 border-b border-border font-mono text-xs text-muted-foreground">
+            {"import { Alert, AlertTitle, AlertDescription } from \"@/components/ui/alert\""}
+          </div>
+          <div className="flex gap-4 border-b border-border px-5 py-3">
+            <code className="w-20 shrink-0 font-mono text-xs text-primary">variant</code>
+            <code className="flex-1 min-w-0 font-mono text-xs text-muted-foreground hidden sm:block">"info" | "success" | "warning" | "error" | "default" | "destructive"</code>
+            <code className="w-24 shrink-0 font-mono text-xs text-muted-foreground hidden md:block">"default"</code>
+            <p className="w-64 shrink-0 text-muted-foreground text-xs leading-relaxed hidden lg:block">Severity colour scheme.</p>
+          </div>
+          <div className="flex gap-4 border-b border-border px-5 py-3">
+            <code className="w-20 shrink-0 font-mono text-xs text-primary">className</code>
+            <code className="flex-1 min-w-0 font-mono text-xs text-muted-foreground hidden sm:block">string</code>
+            <code className="w-24 shrink-0 font-mono text-xs text-muted-foreground hidden md:block">—</code>
+            <p className="w-64 shrink-0 text-muted-foreground text-xs leading-relaxed hidden lg:block">Use "pr-10" for dismissible buttons.</p>
+          </div>
+          <div className="flex gap-4 px-5 py-3">
+            <code className="w-20 shrink-0 font-mono text-xs text-primary">children</code>
+            <code className="flex-1 min-w-0 font-mono text-xs text-muted-foreground hidden sm:block">ReactNode</code>
+            <code className="w-24 shrink-0 font-mono text-xs text-muted-foreground hidden md:block">required</code>
+            <p className="w-64 shrink-0 text-muted-foreground text-xs leading-relaxed hidden lg:block">Compose with AlertTitle, AlertDescription.</p>
+          </div>
+        </div>
+      </Section>
+
       {/* Overview */}
       <Section title="Overview">
         <div className="space-y-4 text-sm text-muted-foreground leading-relaxed">
@@ -182,105 +191,162 @@ export default function AlertPage() {
             <div className="rounded-xl border border-success/20 bg-success/5 p-4">
               <p className="font-semibold text-foreground mb-2 text-xs uppercase tracking-wide">When to Use</p>
               <ul className="space-y-1.5">
-                {[
-                  "Informational messages: tips, help, contextual guidance",
-                  "Success confirmations after an action",
-                  "Warnings about approaching limits or upcoming changes",
-                  "Non-blocking error messages",
-                ].map((i) => (
-                  <li key={i} className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-success" />{i}</li>
-                ))}
+                <li className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-success" />Informational messages: tips, help, contextual guidance</li>
+                <li className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-success" />Success confirmations after an action</li>
+                <li className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-success" />Warnings about approaching limits or upcoming changes</li>
+                <li className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-success" />Non-blocking error messages</li>
               </ul>
             </div>
             <div className="rounded-xl border border-warning/20 bg-warning/5 p-4">
               <p className="font-semibold text-foreground mb-2 text-xs uppercase tracking-wide">When NOT to Use</p>
               <ul className="space-y-1.5">
-                {[
-                  "Blocking errors that require action — use a Dialog",
-                  "Brief transient feedback — use a Toast",
-                  "Form field validation — use inline field errors",
-                  "System-wide announcements — use a Banner",
-                ].map((i) => (
-                  <li key={i} className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-warning" />{i}</li>
-                ))}
+                <li className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-warning" />Blocking errors that require action — use a Dialog</li>
+                <li className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-warning" />Brief transient feedback — use a Toast</li>
+                <li className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-warning" />Form field validation — use inline field errors</li>
+                <li className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-warning" />System-wide announcements — use a Banner</li>
               </ul>
             </div>
           </div>
         </div>
       </Section>
 
-      {/* Preview */}
-      <Section title="Preview">
-        <PreviewBox layout="stack">
-          <PreviewRow label="Info">
-            <Alert variant="info" title="New feature available">
-              The new dashboard is now in beta. Enable it in Settings → Beta Features.
-            </Alert>
-          </PreviewRow>
-          <PreviewRow label="Success">
-            <Alert variant="success" title="Payment successful">
-              Your subscription has been renewed. Next billing date: July 17, 2026.
-            </Alert>
-          </PreviewRow>
-          <PreviewRow label="Warning">
-            <Alert variant="warning" title="Approaching usage limit">
-              You've used 90% of your monthly API quota. Consider upgrading your plan.
-            </Alert>
-          </PreviewRow>
-          <PreviewRow label="Error">
-            <Alert variant="error" title="Export failed">
-              We couldn't process your export. Check your network connection and try again.
-            </Alert>
-          </PreviewRow>
-          <PreviewRow label="Without title (inline)">
-            <Alert variant="info">
-              This action will permanently delete the record and cannot be undone.
-            </Alert>
-          </PreviewRow>
-          <PreviewRow label="Dismissible">
-            {dismissed["warning-demo"] ? (
-              <p className="text-sm text-muted-foreground italic">Alert dismissed.</p>
-            ) : (
-              <Alert variant="warning" title="Action required" dismissible onDismiss={() => dismiss("warning-demo")}>
-                Your trial ends in 3 days. Add a payment method to continue.
-              </Alert>
-            )}
-          </PreviewRow>
-        </PreviewBox>
-      </Section>
+      <hr className="border-border" />
 
-      {/* Code Examples */}
-      <Section title="Code Examples">
-        <CodeTabs tabs={[
-          { label: "React",     code: reactCode,     language: "tsx"  },
-          { label: "Tailwind",  code: tailwindCode,  language: "tsx"  },
-          { label: "shadcn/ui", code: shadcnInstall, language: "bash" },
-        ]} />
-      </Section>
+      {/* ── Severity Variants ──────────────────────────────────────────────────── */}
+      <div className="rounded-xl bg-background dark:bg-card shadow-elevation-3 overflow-hidden">
+        <div className="px-6 py-4 border-b border-border">
+          <div className="border-l-4 border-warning pl-4 space-y-1">
+            <h3 className="text-base font-semibold text-foreground">Severity Variants</h3>
+            <p className="text-sm text-muted-foreground">Four intent levels: info, success, warning, and error. Always pair colour with an icon.</p>
+          </div>
+        </div>
+        <div className="p-6">
+          <div className="grid lg:grid-cols-2 gap-6 items-start">
+            <div className="rounded-lg bg-neutral-100 dark:bg-neutral-800/50 divide-y divide-border overflow-hidden">
+              <div className="px-4 py-4">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Info</p>
+                <Alert variant="info">
+                  <Info className="h-4 w-4" />
+                  <AlertTitle>New feature available</AlertTitle>
+                  <AlertDescription>
+                    The new dashboard is now in beta. Enable it in Settings → Beta Features.
+                  </AlertDescription>
+                </Alert>
+              </div>
+              <div className="px-4 py-4">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Success</p>
+                <Alert variant="success">
+                  <CheckCircle2 className="h-4 w-4" />
+                  <AlertTitle>Payment successful</AlertTitle>
+                  <AlertDescription>
+                    Your subscription has been renewed. Next billing date: July 17, 2026.
+                  </AlertDescription>
+                </Alert>
+              </div>
+              <div className="px-4 py-4">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Warning</p>
+                <Alert variant="warning">
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertTitle>Approaching usage limit</AlertTitle>
+                  <AlertDescription>
+                    You've used 90% of your monthly API quota. Consider upgrading your plan.
+                  </AlertDescription>
+                </Alert>
+              </div>
+              <div className="px-4 py-4">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Error</p>
+                <Alert variant="error">
+                  <XCircle className="h-4 w-4" />
+                  <AlertTitle>Export failed</AlertTitle>
+                  <AlertDescription>
+                    We couldn't process your export. Check your network connection and try again.
+                  </AlertDescription>
+                </Alert>
+              </div>
+              <div className="px-4 py-4">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Without title (inline message)</p>
+                <Alert variant="info">
+                  <Info className="h-4 w-4" />
+                  <AlertDescription>
+                    This action will permanently delete the record and cannot be undone.
+                  </AlertDescription>
+                </Alert>
+              </div>
+            </div>
+            <div className="sticky top-6">
+              <CodeTabs tabs={[
+                { label: "shadcn/ui", language: "tsx", code: shadcnCode },
+                { label: "Tailwind",  language: "tsx", code: tailwindCode },
+              ]} />
+            </div>
+          </div>
+        </div>
+      </div>
 
-      {/* Variants */}
+      {/* ── Dismissible ────────────────────────────────────────────────────────── */}
+      <div className="rounded-xl bg-background dark:bg-card shadow-elevation-3 overflow-hidden">
+        <div className="px-6 py-4 border-b border-border">
+          <div className="border-l-4 border-warning pl-4 space-y-1">
+            <h3 className="text-base font-semibold text-foreground">Dismissible</h3>
+            <p className="text-sm text-muted-foreground">Control visibility with state. Add <code className="font-mono">className="pr-10"</code> and an absolute-positioned dismiss button.</p>
+          </div>
+        </div>
+        <div className="p-6">
+          <div className="grid lg:grid-cols-2 gap-6 items-start">
+            <div className="rounded-lg bg-neutral-100 dark:bg-neutral-800/50 divide-y divide-border overflow-hidden">
+              <div className="px-4 py-4">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Dismissible</p>
+                {dismissed ? (
+                  <p className="text-sm text-muted-foreground italic">Alert dismissed.</p>
+                ) : (
+                  <Alert variant="warning" className="pr-10">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTitle>Action required</AlertTitle>
+                    <AlertDescription>
+                      Your trial ends in 3 days. Add a payment method to continue.
+                    </AlertDescription>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setDismissed(true)}
+                      aria-label="Dismiss alert"
+                      className="absolute right-2 top-2 h-8 w-8 text-muted-foreground hover:bg-background hover:text-foreground"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </Alert>
+                )}
+              </div>
+            </div>
+            <div className="sticky top-6">
+              <CodeTabs tabs={[
+                { label: "shadcn/ui", language: "tsx", code: dismissibleCode },
+              ]} />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Variant Reference */}
       <Section title="Variant Reference">
         <div className="rounded-xl border border-border overflow-hidden text-sm">
-          {([
-            { variant: "info",    icon: "Info",          usage: "Neutral information, tips, guidance, contextual help." },
-            { variant: "success", icon: "CheckCircle2",  usage: "Positive confirmation: saved, published, payment ok." },
-            { variant: "warning", icon: "AlertTriangle", usage: "Caution: approaching limit, deprecated feature, risk." },
-            { variant: "error",   icon: "XCircle",       usage: "Non-blocking error: failed action, validation issue."  },
-          ] as const).map(({ variant, icon, usage }) => (
-            <div key={variant} className="flex items-start gap-4 border-b border-border last:border-0 px-5 py-4">
-              <div className="w-24 shrink-0">
-                <span className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold capitalize",
-                  variant === "info"    && "bg-primary/10 text-primary",
-                  variant === "success" && "bg-success/15 text-success",
-                  variant === "warning" && "bg-warning/15 text-warning",
-                  variant === "error"   && "bg-error/10 text-error",
-                )}>
-                  {variant}
-                </span>
-              </div>
-              <p className="text-xs text-muted-foreground leading-relaxed"><code className="font-mono text-xs text-foreground">{icon}</code> — {usage}</p>
-            </div>
-          ))}
+          <div className="flex items-start gap-4 border-b border-border px-5 py-4">
+            <div className="w-24 shrink-0"><Alert variant="info" className="p-1.5 text-xs"><Info className="h-3 w-3" /><AlertDescription className="text-xs">info</AlertDescription></Alert></div>
+            <p className="text-xs text-muted-foreground leading-relaxed"><code className="font-mono text-xs text-foreground">Info</code> — Neutral information, tips, guidance, contextual help.</p>
+          </div>
+          <div className="flex items-start gap-4 border-b border-border px-5 py-4">
+            <div className="w-24 shrink-0"><Alert variant="success" className="p-1.5 text-xs"><CheckCircle2 className="h-3 w-3" /><AlertDescription className="text-xs">success</AlertDescription></Alert></div>
+            <p className="text-xs text-muted-foreground leading-relaxed"><code className="font-mono text-xs text-foreground">CheckCircle2</code> — Positive confirmation: saved, published, payment ok.</p>
+          </div>
+          <div className="flex items-start gap-4 border-b border-border px-5 py-4">
+            <div className="w-24 shrink-0"><Alert variant="warning" className="p-1.5 text-xs"><AlertTriangle className="h-3 w-3" /><AlertDescription className="text-xs">warning</AlertDescription></Alert></div>
+            <p className="text-xs text-muted-foreground leading-relaxed"><code className="font-mono text-xs text-foreground">AlertTriangle</code> — Caution: approaching limit, deprecated feature, risk.</p>
+          </div>
+          <div className="flex items-start gap-4 px-5 py-4">
+            <div className="w-24 shrink-0"><Alert variant="error" className="p-1.5 text-xs"><XCircle className="h-3 w-3" /><AlertDescription className="text-xs">error</AlertDescription></Alert></div>
+            <p className="text-xs text-muted-foreground leading-relaxed"><code className="font-mono text-xs text-foreground">XCircle</code> — Non-blocking error: failed action, validation issue.</p>
+          </div>
         </div>
       </Section>
 
@@ -290,7 +356,7 @@ export default function AlertPage() {
           dos={[
             { text: "Always include an icon that matches the variant — colour + icon together communicate intent." },
             { text: "Keep alert text concise: one sentence for the message, one for the action (if any)." },
-            { text: "Use role=\"alert\" so screen readers announce the content immediately when it renders." },
+            { text: 'Use role="alert" so screen readers announce the content immediately when it renders.' },
             { text: "Provide a dismiss button for non-critical alerts that don't require action." },
           ]}
           donts={[
@@ -302,23 +368,11 @@ export default function AlertPage() {
         />
       </Section>
 
-      {/* Props */}
-      <Section title="Props">
-        <PropsTable props={[
-          { name: "variant",     type: '"info" | "success" | "warning" | "error"', default: '"info"', description: "Sets the icon, border, and background colour." },
-          { name: "title",       type: "string",   default: "—",     description: "Optional bold title displayed above the description." },
-          { name: "children",    type: "ReactNode", required: true,  description: "Alert body content." },
-          { name: "dismissible", type: "boolean",  default: "false", description: "Shows a close button in the top-right corner." },
-          { name: "onDismiss",   type: "() => void", default: "—",   description: "Callback when the dismiss button is clicked." },
-          { name: "className",   type: "string",   default: "—",     description: "Additional Tailwind classes." },
-        ]} />
-      </Section>
-
-      {/* Accessibility */}
-      <Section title="Accessibility">
+      {/* Keyboard & Accessibility */}
+      <Section title="Keyboard & Accessibility">
         <KeyboardTable rows={[
-          { keys: ["Tab"],        action: "Move focus to the dismiss button (if present)" },
-          { keys: ["Enter / Space"], action: "Activate the dismiss button"                },
+          { keys: ["Tab"],            action: "Move focus to the dismiss button (if present)" },
+          { keys: ["Enter", "Space"], action: "Activate the dismiss button"                   },
         ]} />
         <div className="mt-4 rounded-xl border border-border p-5 text-sm">
           <ul className="space-y-2 text-muted-foreground">
@@ -327,6 +381,15 @@ export default function AlertPage() {
             <li className="flex gap-2"><span className="font-mono text-primary shrink-0">icons</span><span>Icons are decorative (<code className="font-mono">aria-hidden="true"</code>). Meaning is conveyed by text content.</span></li>
           </ul>
         </div>
+      </Section>
+
+      {/* All Props */}
+      <Section title="All Props">
+        <PropsTable props={[
+          { name: "variant",   type: '"info" | "success" | "warning" | "error" | "default" | "destructive"', default: '"default"', description: "Sets the icon colour, border, and background via design tokens." },
+          { name: "className", type: "string",    default: "—",         description: 'Use "pr-10" when adding a dismiss button to reserve space.' },
+          { name: "children",  type: "ReactNode",  required: true,      description: "Compose with AlertTitle, AlertDescription, and optional Button." },
+        ]} />
       </Section>
     </ComponentLayout>
   )

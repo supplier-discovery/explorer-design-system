@@ -94,6 +94,9 @@
     --color-surface-selected: #E5E7EB;
     --color-surface-overlay: rgba(0, 0, 0, 0.5);
 
+    /* ----- SIDEBAR CHROME ----- */
+    --sidebar-chrome: 0 0% 100%;
+
     /* ----- TEXT ----- */
     --color-text-primary: #000000;
     --color-text-secondary: #02332E;

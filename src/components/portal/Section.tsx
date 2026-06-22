@@ -95,7 +95,7 @@ export function PropsTable({ props }: { props: PropRow[] }) {
     <div className="overflow-hidden rounded-xl border border-border">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-border bg-neutral-50 dark:bg-neutral-900/60">
+          <tr className="border-b border-border bg-muted">
             <th className="px-4 py-3 text-left font-medium text-muted-foreground">Prop</th>
             <th className="px-4 py-3 text-left font-medium text-muted-foreground">Type</th>
             <th className="px-4 py-3 text-left font-medium text-muted-foreground">Default</th>
@@ -136,7 +136,7 @@ export function KeyboardTable({ rows }: { rows: KeyboardRow[] }) {
     <div className="overflow-hidden rounded-xl border border-border">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-border bg-neutral-50 dark:bg-neutral-900/60">
+          <tr className="border-b border-border bg-muted">
             <th className="px-4 py-3 text-left font-medium text-muted-foreground w-48">Key(s)</th>
             <th className="px-4 py-3 text-left font-medium text-muted-foreground">Action</th>
           </tr>

@@ -1,8 +1,7 @@
 import { useParams, Link } from "react-router-dom"
-import { Clock, ArrowLeft, ExternalLink } from "lucide-react"
-import { componentBySlug, navigation } from "@/data/navigation"
+import { Clock, ArrowLeft } from "lucide-react"
+import { componentBySlug, getCategoryLabel } from "@/data/navigation"
 
-// Converts a slug like "alert-dialog" to "Alert Dialog"
 function slugToLabel(slug: string) {
   return slug
     .split("-")
@@ -10,24 +9,12 @@ function slugToLabel(slug: string) {
     .join(" ")
 }
 
-// Gets the category name for a slug
-function getCategory(slug: string) {
-  for (const group of navigation) {
-    if (group.items.some((i) => i.slug === slug)) return group.label
-  }
-  return "Components"
-}
-
 export default function PlaceholderPage() {
   const { slug = "" } = useParams<{ slug: string }>()
   const item = componentBySlug.get(slug)
   const name = item?.label ?? slugToLabel(slug)
   const description = item?.description ?? "Component documentation coming soon."
-  const category = getCategory(slug)
-
-  // shadcn/ui docs URL (best-effort mapping)
-  const shadcnSlug = slug.replace(/-/g, "-")
-  const shadcnUrl = `https://ui.shadcn.com/docs/components/${shadcnSlug}`
+  const category = getCategoryLabel(slug)
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-10 lg:px-8">
@@ -90,15 +77,6 @@ export default function PlaceholderPage() {
             <ArrowLeft className="h-4 w-4" />
             Back to Overview
           </Link>
-          <a
-            href={shadcnUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-dark"
-          >
-            View in shadcn/ui docs
-            <ExternalLink className="h-3.5 w-3.5" />
-          </a>
         </div>
       </div>
 

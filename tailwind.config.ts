@@ -63,6 +63,7 @@ const config: Config = {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
+        "sidebar-chrome": "hsl(var(--sidebar-chrome) / <alpha-value>)",
 
         // Brand palette tokens
         primary: {

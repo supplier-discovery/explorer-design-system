@@ -1,37 +1,22 @@
 import { Link } from "react-router-dom"
 import { ChevronRight } from "lucide-react"
+import { Badge, type BadgeVariant } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 
-// ─── StatusBadge ─────────────────────────────────────────────────────────────
+// ─── Status badge (uses shadcn Badge) ────────────────────────────────────────
 
 type Status = "stable" | "beta" | "new" | "deprecated"
 
-const statusStyles: Record<Status, string> = {
-  stable:     "bg-success/10 text-success border-success/20",
-  beta:       "bg-warning/10 text-warning border-warning/20",
+const statusVariant: Record<Status, BadgeVariant> = {
+  stable:     "success",
+  beta:       "warning",
+  new:        "secondary",
+  deprecated: "neutral",
+}
+
+const statusClassName: Partial<Record<Status, string>> = {
   new:        "bg-secondary/10 text-secondary border-secondary/20",
-  deprecated: "bg-neutral-500/10 text-neutral-500 border-neutral-500/20",
-}
-
-function StatusBadge({ status }: { status: Status }) {
-  return (
-    <span className={cn(
-      "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize",
-      statusStyles[status]
-    )}>
-      {status}
-    </span>
-  )
-}
-
-// ─── TagBadge ─────────────────────────────────────────────────────────────────
-
-function TagBadge({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="inline-flex items-center rounded-full border border-border bg-background dark:bg-card px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
-      {children}
-    </span>
-  )
+  deprecated: "bg-neutral-500/10 text-neutral-500 border-neutral-500/20 dark:bg-neutral-800 dark:text-neutral-400",
 }
 
 // ─── ComponentLayout ──────────────────────────────────────────────────────────
@@ -67,15 +52,31 @@ export function ComponentLayout({
           <ChevronRight className="h-3.5 w-3.5" />
           <span className="text-foreground font-medium">{name}</span>
         </nav>
+
         <div className="flex items-center justify-between gap-4">
           <h1 className="text-4xl font-bold text-foreground tracking-tight">{name}</h1>
           <div className="flex flex-wrap items-center gap-2 shrink-0">
-            <StatusBadge status={status} />
+            {/* Status badge */}
+            <Badge
+              variant={statusVariant[status]}
+              className={cn("capitalize", statusClassName[status])}
+            >
+              {status}
+            </Badge>
+
+            {/* Tag badges */}
             {tags.map((tag) => (
-              <TagBadge key={tag}>{tag}</TagBadge>
+              <Badge
+                key={tag}
+                variant="outline"
+                className="bg-background dark:bg-card text-muted-foreground"
+              >
+                {tag}
+              </Badge>
             ))}
           </div>
         </div>
+
         <p className="text-lg text-muted-foreground">{description}</p>
       </header>
 

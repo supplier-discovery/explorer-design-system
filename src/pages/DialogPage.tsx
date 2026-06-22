@@ -1,90 +1,25 @@
 import { useState } from "react"
-import { X, AlertTriangle, Trash2, LogOut, Settings } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { AlertTriangle, Trash2, LogOut, Settings } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { ComponentLayout, InfoGrid } from "@/components/portal/ComponentLayout"
 import { Section, DosDonts, PropsTable, KeyboardTable } from "@/components/portal/Section"
-import { PreviewBox, PreviewRow } from "@/components/portal/PreviewBox"
 import { CodeTabs } from "@/components/portal/CodeBlock"
-
-// ─── Inline Dialog ────────────────────────────────────────────────────────────
-
-type DialogSize = "sm" | "md" | "lg"
-
-const dialogSizes: Record<DialogSize, string> = {
-  sm: "max-w-sm",
-  md: "max-w-lg",
-  lg: "max-w-2xl",
-}
-
-interface DialogProps {
-  open: boolean
-  onClose: () => void
-  title?: string
-  description?: string
-  size?: DialogSize
-  children?: React.ReactNode
-  footer?: React.ReactNode
-  hideCloseButton?: boolean
-}
-
-function Dialog({ open, onClose, title, description, size = "md", children, footer, hideCloseButton }: DialogProps) {
-  if (!open) return null
-  return (
-    <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm transition-opacity"
-        aria-hidden="true"
-        onClick={onClose}
-      />
-      {/* Panel */}
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={title ? "dialog-title" : undefined}
-        aria-describedby={description ? "dialog-desc" : undefined}
-        className={cn(
-          "fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 w-[calc(100vw-2rem)]",
-          "rounded-2xl border border-border bg-background shadow-elevation-5 outline-none",
-          "flex flex-col",
-          dialogSizes[size]
-        )}
-      >
-        {/* Header */}
-        {(title || !hideCloseButton) && (
-          <div className="flex items-start justify-between gap-4 p-6 pb-0">
-            <div>
-              {title && <h2 id="dialog-title" className="text-lg font-semibold text-foreground">{title}</h2>}
-              {description && <p id="dialog-desc" className="mt-1 text-sm text-muted-foreground">{description}</p>}
-            </div>
-            {!hideCloseButton && (
-              <button
-                type="button"
-                onClick={onClose}
-                aria-label="Close dialog"
-                className="shrink-0 rounded-lg p-2 text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            )}
-          </div>
-        )}
-        {/* Body */}
-        {children && <div className="p-6">{children}</div>}
-        {/* Footer */}
-        {footer && (
-          <div className="flex items-center justify-end gap-3 border-t border-border px-6 py-4">
-            {footer}
-          </div>
-        )}
-      </div>
-    </>
-  )
-}
 
 // ─── Code examples ────────────────────────────────────────────────────────────
 
-const reactCode = `import {
+const shadcnCode = `// Install: npx shadcn@latest add dialog
+
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -97,7 +32,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-// Basic dialog
+// Basic dialog — uncontrolled with DialogTrigger
 <Dialog>
   <DialogTrigger asChild>
     <Button variant="outline">Open Dialog</Button>
@@ -113,10 +48,6 @@ import { Label } from "@/components/ui/label"
       <div className="grid gap-1.5">
         <Label htmlFor="name">Name</Label>
         <Input id="name" defaultValue="Pedro Duarte" />
-      </div>
-      <div className="grid gap-1.5">
-        <Label htmlFor="username">Username</Label>
-        <Input id="username" defaultValue="@peduarte" />
       </div>
     </div>
     <DialogFooter>
@@ -134,10 +65,10 @@ import { Label } from "@/components/ui/label"
     <DialogHeader>
       <DialogTitle>Delete Account?</DialogTitle>
       <DialogDescription>
-        This action cannot be undone. Your account and all data will be permanently deleted.
+        This action cannot be undone. All data will be permanently deleted.
       </DialogDescription>
     </DialogHeader>
-    <DialogFooter className="flex gap-3">
+    <DialogFooter>
       <Button variant="outline">Cancel</Button>
       <Button variant="destructive">Delete Account</Button>
     </DialogFooter>
@@ -198,44 +129,13 @@ const tailwindCode = `{/* Dialog with Tailwind — use a state variable to contr
   </>
 )}`
 
-const shadcnInstall = `# Install dialog component
-npx shadcn@latest add dialog
-
-# Usage
-import {
-  Dialog, DialogContent, DialogDescription,
-  DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
-} from "@/components/ui/dialog"
-
-function EditDialog() {
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button>Edit Profile</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
-          <DialogDescription>
-            Make changes here. Click save when done.
-          </DialogDescription>
-        </DialogHeader>
-        {/* form fields */}
-        <DialogFooter>
-          <Button type="submit">Save changes</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  )
-}`
-
 // ─── DialogPage ───────────────────────────────────────────────────────────────
 
 export default function DialogPage() {
-  const [openBasic, setOpenBasic]       = useState(false)
-  const [openConfirm, setOpenConfirm]   = useState(false)
+  const [openBasic, setOpenBasic]             = useState(false)
+  const [openConfirm, setOpenConfirm]         = useState(false)
   const [openDestructive, setOpenDestructive] = useState(false)
-  const [openLarge, setOpenLarge]       = useState(false)
+  const [openLarge, setOpenLarge]             = useState(false)
 
   return (
     <ComponentLayout
@@ -251,6 +151,45 @@ export default function DialogPage() {
         { label: "Focus",    value: "Trap + restore on close"  },
         { label: "WCAG",     value: "AA 2.2"                   },
       ]} />
+
+      {/* Component API */}
+      <Section title="Component API">
+        <div className="rounded-xl border border-border overflow-hidden text-sm">
+          <div className="bg-neutral-50 dark:bg-neutral-900 px-5 py-3 border-b border-border font-mono text-xs text-muted-foreground">
+            {'import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"'}
+          </div>
+          <div className="flex gap-4 border-b border-border px-5 py-3">
+            <code className="w-24 shrink-0 font-mono text-xs text-primary">open</code>
+            <code className="flex-1 min-w-0 font-mono text-xs text-muted-foreground hidden sm:block">boolean</code>
+            <code className="w-24 shrink-0 font-mono text-xs text-muted-foreground hidden md:block">required</code>
+            <p className="w-64 shrink-0 text-muted-foreground text-xs leading-relaxed hidden lg:block">Controls visibility of the dialog.</p>
+          </div>
+          <div className="flex gap-4 border-b border-border px-5 py-3">
+            <code className="w-24 shrink-0 font-mono text-xs text-primary">onOpenChange</code>
+            <code className="flex-1 min-w-0 font-mono text-xs text-muted-foreground hidden sm:block">(open: boolean) =&gt; void</code>
+            <code className="w-24 shrink-0 font-mono text-xs text-muted-foreground hidden md:block">required</code>
+            <p className="w-64 shrink-0 text-muted-foreground text-xs leading-relaxed hidden lg:block">Called when dialog should open or close.</p>
+          </div>
+          <div className="flex gap-4 border-b border-border px-5 py-3">
+            <code className="w-24 shrink-0 font-mono text-xs text-primary">modal</code>
+            <code className="flex-1 min-w-0 font-mono text-xs text-muted-foreground hidden sm:block">boolean</code>
+            <code className="w-24 shrink-0 font-mono text-xs text-muted-foreground hidden md:block">true</code>
+            <p className="w-64 shrink-0 text-muted-foreground text-xs leading-relaxed hidden lg:block">When true, renders a backdrop and traps focus.</p>
+          </div>
+          <div className="flex gap-4 border-b border-border px-5 py-3">
+            <code className="w-24 shrink-0 font-mono text-xs text-primary">DialogContent</code>
+            <code className="flex-1 min-w-0 font-mono text-xs text-muted-foreground hidden sm:block">div props</code>
+            <code className="w-24 shrink-0 font-mono text-xs text-muted-foreground hidden md:block">—</code>
+            <p className="w-64 shrink-0 text-muted-foreground text-xs leading-relaxed hidden lg:block">The dialog panel. Use className for max-width overrides.</p>
+          </div>
+          <div className="flex gap-4 px-5 py-3">
+            <code className="w-24 shrink-0 font-mono text-xs text-primary">DialogTrigger</code>
+            <code className="flex-1 min-w-0 font-mono text-xs text-muted-foreground hidden sm:block">button props</code>
+            <code className="w-24 shrink-0 font-mono text-xs text-muted-foreground hidden md:block">—</code>
+            <p className="w-64 shrink-0 text-muted-foreground text-xs leading-relaxed hidden lg:block">Wraps the trigger. Use asChild with your own button.</p>
+          </div>
+        </div>
+      </Section>
 
       {/* Overview */}
       <Section title="Overview">
@@ -281,145 +220,140 @@ export default function DialogPage() {
         </div>
       </Section>
 
-      {/* Preview */}
-      <Section title="Preview">
-        <PreviewBox layout="stack">
+      <hr className="border-border" />
 
-          <PreviewRow label="Basic dialog">
-            <button
-              type="button"
-              onClick={() => setOpenBasic(true)}
-              className="rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-surface-hover focus:outline-none focus:ring-2 focus:ring-ring"
-            >
-              Open Basic Dialog
-            </button>
-            <Dialog
-              open={openBasic}
-              onClose={() => setOpenBasic(false)}
-              title="Edit Profile"
-              description="Make changes to your profile. Click save when you're done."
-              footer={
-                <>
-                  <button onClick={() => setOpenBasic(false)} className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-surface-hover">Cancel</button>
-                  <button onClick={() => setOpenBasic(false)} className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-dark">Save Changes</button>
-                </>
-              }
-            >
-              <div className="space-y-4">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-medium text-foreground">Display Name</label>
-                  <input className="h-10 w-full rounded-lg border border-border bg-background px-4 text-sm focus:outline-none focus:ring-2 focus:ring-ring" defaultValue="Shankar M." />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-medium text-foreground">Email</label>
-                  <input className="h-10 w-full rounded-lg border border-border bg-background px-4 text-sm focus:outline-none focus:ring-2 focus:ring-ring" defaultValue="shankar@supplier.io" />
-                </div>
-              </div>
-            </Dialog>
-          </PreviewRow>
+      {/* ── Dialog Types ─────────────────────────────────────────────────────── */}
+      <div className="rounded-xl bg-background dark:bg-card shadow-elevation-3 overflow-hidden">
+        <div className="px-6 py-4 border-b border-border">
+          <div className="border-l-4 border-warning pl-4 space-y-1">
+            <h3 className="text-base font-semibold text-foreground">Dialog Types</h3>
+            <p className="text-sm text-muted-foreground">Click any trigger to open the dialog. All demos are controlled — state lives in the page component.</p>
+          </div>
+        </div>
+        <div className="p-6">
+          <div className="grid lg:grid-cols-2 gap-6 items-start">
+            <div className="rounded-lg bg-neutral-100 dark:bg-neutral-800/50 divide-y divide-border overflow-hidden">
 
-          <PreviewRow label="Confirmation dialog">
-            <button
-              type="button"
-              onClick={() => setOpenConfirm(true)}
-              className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-dark"
-            >
-              <LogOut className="h-4 w-4" />
-              Sign Out
-            </button>
-            <Dialog
-              open={openConfirm}
-              onClose={() => setOpenConfirm(false)}
-              title="Sign out?"
-              description="You will be signed out from all devices. Any unsaved changes will be lost."
-              footer={
-                <>
-                  <button onClick={() => setOpenConfirm(false)} className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-surface-hover">Cancel</button>
-                  <button onClick={() => setOpenConfirm(false)} className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-dark">Sign Out</button>
-                </>
-              }
-            />
-          </PreviewRow>
-
-          <PreviewRow label="Destructive confirmation">
-            <button
-              type="button"
-              onClick={() => setOpenDestructive(true)}
-              className="inline-flex items-center gap-2 rounded-lg bg-error px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-error/80"
-            >
-              <Trash2 className="h-4 w-4" />
-              Delete Record
-            </button>
-            <Dialog
-              open={openDestructive}
-              onClose={() => setOpenDestructive(false)}
-              size="sm"
-              footer={
-                <>
-                  <button onClick={() => setOpenDestructive(false)} className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-surface-hover">Cancel</button>
-                  <button onClick={() => setOpenDestructive(false)} className="rounded-lg bg-error px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-error/80">Delete Permanently</button>
-                </>
-              }
-            >
-              <div className="flex items-start gap-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-error/10">
-                  <AlertTriangle className="h-5 w-5 text-error" />
-                </div>
-                <div>
-                  <p className="font-semibold text-foreground">Delete Record?</p>
-                  <p className="mt-1 text-sm text-muted-foreground">This action cannot be undone. The record and all associated data will be permanently removed from our servers.</p>
-                </div>
-              </div>
-            </Dialog>
-          </PreviewRow>
-
-          <PreviewRow label="Large dialog">
-            <button
-              type="button"
-              onClick={() => setOpenLarge(true)}
-              className="inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-surface-hover"
-            >
-              <Settings className="h-4 w-4" />
-              Advanced Settings
-            </button>
-            <Dialog
-              open={openLarge}
-              onClose={() => setOpenLarge(false)}
-              title="Advanced Settings"
-              description="Configure advanced preferences for your workspace."
-              size="lg"
-              footer={
-                <>
-                  <button onClick={() => setOpenLarge(false)} className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-surface-hover">Cancel</button>
-                  <button onClick={() => setOpenLarge(false)} className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-dark">Apply Settings</button>
-                </>
-              }
-            >
-              <div className="space-y-5">
-                {["Data retention policy", "Two-factor authentication", "API access tokens", "Audit log export"].map((item) => (
-                  <div key={item} className="flex items-center justify-between py-2 border-b border-border last:border-0">
-                    <div>
-                      <p className="text-sm font-medium text-foreground">{item}</p>
-                      <p className="text-xs text-muted-foreground">Configure {item.toLowerCase()}</p>
+              {/* Basic dialog */}
+              <div className="px-4 py-4">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Basic dialog</p>
+                <Button variant="outline" onClick={() => setOpenBasic(true)}>Open Basic Dialog</Button>
+                <Dialog open={openBasic} onOpenChange={setOpenBasic}>
+                  <DialogContent className="rounded-2xl max-w-lg">
+                    <DialogHeader>
+                      <DialogTitle>Edit Profile</DialogTitle>
+                      <DialogDescription>Make changes to your profile. Click save when you're done.</DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div className="flex flex-col gap-1.5">
+                        <Label htmlFor="display-name">Display Name</Label>
+                        <Input id="display-name" defaultValue="Shankar M." />
+                      </div>
+                      <div className="flex flex-col gap-1.5">
+                        <Label htmlFor="display-email">Email</Label>
+                        <Input id="display-email" type="email" defaultValue="shankar@supplier.io" />
+                      </div>
                     </div>
-                    <button className="rounded-md border border-border px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-surface-hover">Configure</button>
-                  </div>
-                ))}
+                    <DialogFooter>
+                      <Button variant="outline" onClick={() => setOpenBasic(false)}>Cancel</Button>
+                      <Button onClick={() => setOpenBasic(false)}>Save Changes</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </div>
-            </Dialog>
-          </PreviewRow>
 
-        </PreviewBox>
-      </Section>
+              {/* Confirmation dialog */}
+              <div className="px-4 py-4">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Confirmation dialog</p>
+                <Button onClick={() => setOpenConfirm(true)} className="gap-2">
+                  <LogOut className="h-4 w-4" />
+                  Sign Out
+                </Button>
+                <Dialog open={openConfirm} onOpenChange={setOpenConfirm}>
+                  <DialogContent className="rounded-2xl max-w-lg">
+                    <DialogHeader>
+                      <DialogTitle>Sign out?</DialogTitle>
+                      <DialogDescription>You will be signed out from all devices. Any unsaved changes will be lost.</DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                      <Button variant="outline" onClick={() => setOpenConfirm(false)}>Cancel</Button>
+                      <Button onClick={() => setOpenConfirm(false)}>Sign Out</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
 
-      {/* Code Examples */}
-      <Section title="Code Examples">
-        <CodeTabs tabs={[
-          { label: "React",     code: reactCode,     language: "tsx"  },
-          { label: "Tailwind",  code: tailwindCode,  language: "tsx"  },
-          { label: "shadcn/ui", code: shadcnInstall, language: "bash" },
-        ]} />
-      </Section>
+              {/* Destructive confirmation */}
+              <div className="px-4 py-4">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Destructive confirmation</p>
+                <Button variant="destructive" onClick={() => setOpenDestructive(true)} className="gap-2">
+                  <Trash2 className="h-4 w-4" />
+                  Delete Record
+                </Button>
+                <Dialog open={openDestructive} onOpenChange={setOpenDestructive}>
+                  <DialogContent className="rounded-2xl max-w-sm">
+                    <DialogHeader className="sr-only">
+                      <DialogTitle>Delete Record</DialogTitle>
+                    </DialogHeader>
+                    <div className="flex items-start gap-4">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-error/10">
+                        <AlertTriangle className="h-5 w-5 text-error" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-foreground">Delete Record?</p>
+                        <p className="mt-1 text-sm text-muted-foreground">This action cannot be undone. The record and all associated data will be permanently removed from our servers.</p>
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button variant="outline" onClick={() => setOpenDestructive(false)}>Cancel</Button>
+                      <Button variant="destructive" onClick={() => setOpenDestructive(false)}>Delete Permanently</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
+
+              {/* Large dialog */}
+              <div className="px-4 py-4">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Large dialog</p>
+                <Button variant="outline" onClick={() => setOpenLarge(true)} className="gap-2">
+                  <Settings className="h-4 w-4" />
+                  Advanced Settings
+                </Button>
+                <Dialog open={openLarge} onOpenChange={setOpenLarge}>
+                  <DialogContent className="rounded-2xl max-w-2xl">
+                    <DialogHeader>
+                      <DialogTitle>Advanced Settings</DialogTitle>
+                      <DialogDescription>Configure advanced preferences for your workspace.</DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-5">
+                      {["Data retention policy", "Two-factor authentication", "API access tokens", "Audit log export"].map((item) => (
+                        <div key={item} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                          <div>
+                            <p className="text-sm font-medium text-foreground">{item}</p>
+                            <p className="text-xs text-muted-foreground">Configure {item.toLowerCase()}</p>
+                          </div>
+                          <Button variant="outline" size="sm">Configure</Button>
+                        </div>
+                      ))}
+                    </div>
+                    <DialogFooter>
+                      <Button variant="outline" onClick={() => setOpenLarge(false)}>Cancel</Button>
+                      <Button onClick={() => setOpenLarge(false)}>Apply Settings</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
+
+            </div>
+            <div className="sticky top-6">
+              <CodeTabs tabs={[
+                { label: "shadcn/ui", code: shadcnCode,   language: "tsx" },
+                { label: "Tailwind",  code: tailwindCode, language: "tsx" },
+              ]} />
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Sizes */}
       <Section title="Sizes">
@@ -456,23 +390,8 @@ export default function DialogPage() {
         />
       </Section>
 
-      {/* Props */}
-      <Section title="Props">
-        <PropsTable props={[
-          { name: "open",             type: "boolean",      required: true,   description: "Controls visibility of the dialog." },
-          { name: "onOpenChange",     type: "(open: boolean) => void", required: true, description: "Called when dialog should open or close." },
-          { name: "modal",            type: "boolean",      default: "true",  description: "When true, renders a backdrop and traps focus." },
-          { name: "DialogContent",    type: "div props",    default: "—",     description: "The dialog panel. Accepts className for size overrides." },
-          { name: "DialogHeader",     type: "div props",    default: "—",     description: "Container for DialogTitle and DialogDescription." },
-          { name: "DialogTitle",      type: "h2 props",     default: "—",     description: "Dialog heading — linked to aria-labelledby." },
-          { name: "DialogDescription", type: "p props",     default: "—",     description: "Subtitle — linked to aria-describedby." },
-          { name: "DialogFooter",     type: "div props",    default: "—",     description: "Action buttons row at the bottom." },
-          { name: "DialogTrigger",    type: "button props", default: "—",     description: "Wraps the trigger element. Use asChild with your own button." },
-        ]} />
-      </Section>
-
-      {/* Accessibility */}
-      <Section title="Accessibility">
+      {/* Keyboard & Accessibility */}
+      <Section title="Keyboard & Accessibility">
         <KeyboardTable rows={[
           { keys: ["Tab"],        action: "Move focus forward through focusable elements inside the dialog" },
           { keys: ["Shift+Tab"],  action: "Move focus backward inside the dialog" },
@@ -486,6 +405,21 @@ export default function DialogPage() {
             <li className="flex gap-2"><span className="font-mono text-primary shrink-0">Focus trap</span><span>Radix UI traps focus inside the dialog. When closed, focus is restored to the element that triggered the dialog.</span></li>
           </ul>
         </div>
+      </Section>
+
+      {/* All Props */}
+      <Section title="All Props">
+        <PropsTable props={[
+          { name: "open",               type: "boolean",                  required: true,   description: "Controls visibility of the dialog." },
+          { name: "onOpenChange",       type: "(open: boolean) => void",  required: true,   description: "Called when dialog should open or close." },
+          { name: "modal",              type: "boolean",                  default: "true",  description: "When true, renders a backdrop and traps focus." },
+          { name: "DialogContent",      type: "div props",                default: "—",     description: "The dialog panel. Accepts className for size overrides." },
+          { name: "DialogHeader",       type: "div props",                default: "—",     description: "Container for DialogTitle and DialogDescription." },
+          { name: "DialogTitle",        type: "h2 props",                 default: "—",     description: "Dialog heading — linked to aria-labelledby." },
+          { name: "DialogDescription",  type: "p props",                  default: "—",     description: "Subtitle — linked to aria-describedby." },
+          { name: "DialogFooter",       type: "div props",                default: "—",     description: "Action buttons row at the bottom." },
+          { name: "DialogTrigger",      type: "button props",             default: "—",     description: "Wraps the trigger element. Use asChild with your own button." },
+        ]} />
       </Section>
     </ComponentLayout>
   )

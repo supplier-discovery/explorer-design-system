@@ -1,7 +1,6 @@
 import { cn } from "@/lib/utils"
 import { ComponentLayout, InfoGrid } from "@/components/portal/ComponentLayout"
 import { Section, DosDonts, PropsTable } from "@/components/portal/Section"
-import { PreviewBox, PreviewRow } from "@/components/portal/PreviewBox"
 import { CodeTabs } from "@/components/portal/CodeBlock"
 
 // ─── Code examples ────────────────────────────────────────────────────────────
@@ -162,6 +161,8 @@ export default function TypographyPage() {
         </div>
       </Section>
 
+      <hr className="border-border" />
+
       {/* Type Scale */}
       <Section title="Type Scale">
         <div className="rounded-xl border border-border overflow-hidden">
@@ -187,37 +188,58 @@ export default function TypographyPage() {
       </Section>
 
       {/* Font Weights */}
-      <Section title="Font Weights">
-        <PreviewBox layout="stack">
-          <PreviewRow label="Weight scale">
-            <div className="space-y-3 w-full">
-              {fontWeights.map(({ name, weight, cls }) => (
-                <div key={name} className="flex items-baseline gap-6">
-                  <div className="w-24 shrink-0">
-                    <p className="text-xs text-muted-foreground">{name}</p>
-                    <code className="font-mono text-[10px] text-muted-foreground">{weight}</code>
+      <div className="rounded-xl bg-background dark:bg-card shadow-elevation-3 overflow-hidden">
+        <div className="px-6 py-4 border-b border-border">
+          <div className="border-l-4 border-warning pl-4 space-y-1">
+            <h3 className="text-base font-semibold text-foreground">Font Weights</h3>
+            <p className="text-sm text-muted-foreground">Five weight steps — from Normal (400) to Extra Bold (800). Only use Extra Bold for display and hero headings.</p>
+          </div>
+        </div>
+        <div className="p-6">
+          <div className="grid lg:grid-cols-2 gap-6 items-start">
+            <div className="rounded-lg bg-neutral-100 dark:bg-neutral-800/50 p-5">
+              <div className="space-y-3">
+                {fontWeights.map(({ name, weight, cls }) => (
+                  <div key={name} className="flex items-baseline gap-6">
+                    <div className="w-24 shrink-0">
+                      <p className="text-xs text-muted-foreground">{name}</p>
+                      <code className="font-mono text-[10px] text-muted-foreground">{weight}</code>
+                    </div>
+                    <p className={cn("text-xl text-foreground", cls)}>Explorer Design System</p>
                   </div>
-                  <p className={cn("text-xl text-foreground", cls)}>Explorer Design System</p>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </PreviewRow>
-        </PreviewBox>
-      </Section>
+            <div className="sticky top-6">
+              <CodeTabs tabs={[
+                { label: "React",    code: reactCode,    language: "tsx"  },
+                { label: "Tailwind", code: tailwindCode, language: "tsx"  },
+                { label: "HTML",     code: htmlCode,     language: "html" },
+              ]} />
+            </div>
+          </div>
+        </div>
+      </div>
 
-      {/* Colours */}
-      <Section title="Semantic Text Colours">
-        <PreviewBox layout="stack">
-          <PreviewRow label="Colour tokens">
-            <div className="space-y-3 w-full">
+      {/* Semantic Text Colours */}
+      <div className="rounded-xl bg-background dark:bg-card shadow-elevation-3 overflow-hidden">
+        <div className="px-6 py-4 border-b border-border">
+          <div className="border-l-4 border-warning pl-4 space-y-1">
+            <h3 className="text-base font-semibold text-foreground">Semantic Text Colours</h3>
+            <p className="text-sm text-muted-foreground">Always use semantic token classes — never hardcode hex values for text colour.</p>
+          </div>
+        </div>
+        <div className="p-6">
+          <div className="rounded-lg bg-neutral-100 dark:bg-neutral-800/50 p-5">
+            <div className="space-y-3">
               {[
-                { token: "text-foreground",       desc: "Primary content text — headings, body, labels",      sample: "The quick brown fox" },
-                { token: "text-muted-foreground",  desc: "Secondary text — descriptions, metadata, captions",  sample: "The quick brown fox" },
-                { token: "text-primary",           desc: "Brand colour — links, active states, CTAs",          sample: "The quick brown fox" },
-                { token: "text-secondary",         desc: "Accent colour — highlights, success-aligned actions", sample: "The quick brown fox" },
-                { token: "text-success",           desc: "Positive status — success messages, online states",  sample: "The quick brown fox" },
-                { token: "text-warning",           desc: "Caution — warning messages, pending states",         sample: "The quick brown fox" },
-                { token: "text-error",             desc: "Negative status — errors, destructive labels",       sample: "The quick brown fox" },
+                { token: "text-foreground",      desc: "Primary content text — headings, body, labels",       sample: "The quick brown fox" },
+                { token: "text-muted-foreground", desc: "Secondary text — descriptions, metadata, captions",   sample: "The quick brown fox" },
+                { token: "text-primary",          desc: "Brand colour — links, active states, CTAs",           sample: "The quick brown fox" },
+                { token: "text-secondary",        desc: "Accent colour — highlights, success-aligned actions", sample: "The quick brown fox" },
+                { token: "text-success",          desc: "Positive status — success messages, online states",   sample: "The quick brown fox" },
+                { token: "text-warning",          desc: "Caution — warning messages, pending states",          sample: "The quick brown fox" },
+                { token: "text-error",            desc: "Negative status — errors, destructive labels",        sample: "The quick brown fox" },
               ].map(({ token, desc, sample }) => (
                 <div key={token} className="flex items-center gap-6">
                   <code className="w-52 shrink-0 font-mono text-xs text-muted-foreground">{token}</code>
@@ -226,41 +248,42 @@ export default function TypographyPage() {
                 </div>
               ))}
             </div>
-          </PreviewRow>
-        </PreviewBox>
-      </Section>
+          </div>
+        </div>
+      </div>
 
-      {/* Code */}
-      <Section title="Code Examples">
-        <CodeTabs tabs={[
-          { label: "React",    code: reactCode,   language: "tsx"  },
-          { label: "Tailwind", code: tailwindCode, language: "tsx" },
-          { label: "HTML",     code: htmlCode,     language: "html" },
-        ]} />
-      </Section>
-
-      {/* Fonts in use */}
-      <Section title="Fonts in Use">
-        <PreviewBox layout="stack">
-          <PreviewRow label="Jost — Primary typeface">
-            <div className="space-y-4 w-full font-sans">
-              <p className="text-3xl font-bold text-foreground">ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>
-              <p className="text-3xl font-bold text-foreground">abcdefghijklmnopqrstuvwxyz</p>
-              <p className="text-xl text-muted-foreground">0123456789 !@#$%^&*()_+ .,;:'"?/</p>
-              <p className="text-sm text-muted-foreground">The five boxing wizards jump quickly. Pack my box with five dozen liquor jugs.</p>
+      {/* Fonts in Use */}
+      <div className="rounded-xl bg-background dark:bg-card shadow-elevation-3 overflow-hidden">
+        <div className="px-6 py-4 border-b border-border">
+          <div className="border-l-4 border-warning pl-4 space-y-1">
+            <h3 className="text-base font-semibold text-foreground">Fonts in Use</h3>
+            <p className="text-sm text-muted-foreground">Jost for all UI text. JetBrains Mono for code, tokens, and numeric values.</p>
+          </div>
+        </div>
+        <div className="p-6">
+          <div className="rounded-lg bg-neutral-100 dark:bg-neutral-800/50 divide-y divide-border overflow-hidden">
+            <div className="px-4 py-5">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Jost — Primary typeface</p>
+              <div className="space-y-4 font-sans">
+                <p className="text-3xl font-bold text-foreground">ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>
+                <p className="text-3xl font-bold text-foreground">abcdefghijklmnopqrstuvwxyz</p>
+                <p className="text-xl text-muted-foreground">0123456789 !@#$%^&amp;*()_+ .,;:'"?/</p>
+                <p className="text-sm text-muted-foreground">The five boxing wizards jump quickly. Pack my box with five dozen liquor jugs.</p>
+              </div>
             </div>
-          </PreviewRow>
-          <PreviewRow label="JetBrains Mono — Code typeface">
-            <div className="space-y-3 w-full font-mono">
-              <p className="text-xl text-foreground">const tokens = {"{"} primary: '#02332E' {"}"}</p>
-              <p className="text-base text-muted-foreground">function buildClass(variant: string): string {"{"}</p>
-              <p className="text-base text-muted-foreground ml-4">return cn('base-class', variantMap[variant])</p>
-              <p className="text-base text-muted-foreground">{"}"}</p>
-              <code className="text-sm bg-muted rounded-lg px-3 py-1.5 inline-block">npm run build</code>
+            <div className="px-4 py-5">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">JetBrains Mono — Code typeface</p>
+              <div className="space-y-3 font-mono">
+                <p className="text-xl text-foreground">const tokens = {"{"} primary: '#02332E' {"}"}</p>
+                <p className="text-base text-muted-foreground">function buildClass(variant: string): string {"{"}</p>
+                <p className="text-base text-muted-foreground ml-4">return cn('base-class', variantMap[variant])</p>
+                <p className="text-base text-muted-foreground">{"}"}</p>
+                <code className="text-sm bg-muted rounded-lg px-3 py-1.5 inline-block">npm run build</code>
+              </div>
             </div>
-          </PreviewRow>
-        </PreviewBox>
-      </Section>
+          </div>
+        </div>
+      </div>
 
       {/* Do's and Don'ts */}
       <Section title="Do's and Don'ts">

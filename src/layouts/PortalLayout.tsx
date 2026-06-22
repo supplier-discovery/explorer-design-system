@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import { Outlet, Link, useLocation } from "react-router-dom"
 import { Moon, Sun, Menu, X } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { NavSidebar } from "@/components/portal/NavSidebar"
 
 // ─── PortalLayout ─────────────────────────────────────────────────────────────
@@ -44,13 +45,15 @@ export default function PortalLayout() {
         <div className="flex h-14 items-center gap-3 px-4">
 
           {/* Mobile hamburger */}
-          <button
+          <Button
+            variant="outline"
+            size="icon"
             onClick={() => setMobileOpen(true)}
             aria-label="Open navigation"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground lg:hidden"
+            className="shrink-0 lg:hidden"
           >
             <Menu className="h-4 w-4" />
-          </button>
+          </Button>
 
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 flex-1 min-w-0">
@@ -65,15 +68,16 @@ export default function PortalLayout() {
             </div>
           </Link>
 
-          {/* Right actions */}
+          {/* Dark mode toggle */}
           <div className="flex shrink-0 items-center gap-2">
-            <button
+            <Button
+              variant="outline"
+              size="icon"
               onClick={() => setIsDark(!isDark)}
               aria-label="Toggle dark mode"
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
             >
               {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </button>
+            </Button>
           </div>
         </div>
       </header>
@@ -102,20 +106,21 @@ export default function PortalLayout() {
             <div
               role="dialog"
               aria-label="Navigation"
-              className="fixed inset-y-0 left-0 z-50 flex w-[260px] flex-col bg-primary border-r border-white/[0.08] lg:hidden"
+              className="fixed inset-y-0 left-0 z-50 flex w-[260px] flex-col bg-primary border-r border-sidebar-chrome/[0.08] lg:hidden"
             >
               {/* Drawer header */}
-              <div className="flex h-14 items-center justify-between border-b border-white/[0.1] px-4">
+              <div className="flex h-14 items-center justify-between border-b border-sidebar-chrome/[0.1] px-4">
                 <div className="flex items-center gap-2">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-md bg-white/[0.15]">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-md bg-sidebar-chrome/[0.15]">
                     <span className="text-xs font-bold text-white leading-none">EDS</span>
                   </div>
                   <span className="text-sm font-semibold text-white">Navigation</span>
                 </div>
+                {/* Close button kept as raw element — dark sidebar needs white text */}
                 <button
                   onClick={() => setMobileOpen(false)}
                   aria-label="Close navigation"
-                  className="flex h-7 w-7 items-center justify-center rounded text-white/60 hover:text-white transition-colors"
+                  className="flex h-9 w-9 items-center justify-center rounded text-white/60 hover:text-white active:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-1 focus-visible:ring-offset-primary"
                 >
                   <X className="h-4 w-4" />
                 </button>

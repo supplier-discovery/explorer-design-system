@@ -1,63 +1,23 @@
 import { ArrowRight, Star, MoreHorizontal, User, Calendar, Tag } from "lucide-react"
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { ComponentLayout, InfoGrid } from "@/components/portal/ComponentLayout"
-import { Section, DosDonts, PropsTable } from "@/components/portal/Section"
-import { PreviewBox, PreviewRow } from "@/components/portal/PreviewBox"
+import { Section, DosDonts, PropsTable, KeyboardTable } from "@/components/portal/Section"
 import { CodeTabs } from "@/components/portal/CodeBlock"
-
-// ─── Inline Card primitives ───────────────────────────────────────────────────
-
-interface CardProps {
-  variant?: "default" | "elevated" | "outlined" | "ghost"
-  className?: string
-  children: React.ReactNode
-  interactive?: boolean
-  onClick?: () => void
-}
-
-const cardVariants: Record<string, string> = {
-  default:  "bg-background border border-border shadow-elevation-1",
-  elevated: "bg-background border border-border shadow-elevation-3",
-  outlined: "bg-transparent border-2 border-border shadow-none",
-  ghost:    "bg-surface-hover border border-transparent shadow-none",
-}
-
-function Card({ variant = "default", className, children, interactive, onClick }: CardProps) {
-  const base = cn(
-    "rounded-2xl transition-shadow duration-normal",
-    cardVariants[variant],
-    interactive && "cursor-pointer hover:shadow-elevation-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-    className
-  )
-  if (interactive) {
-    return <div role="button" tabIndex={0} onClick={onClick} onKeyDown={(e) => e.key === "Enter" && onClick?.() } className={base}>{children}</div>
-  }
-  return <div className={base}>{children}</div>
-}
-
-function CardHeader({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <div className={cn("flex flex-col gap-1 p-6 pb-0", className)}>{children}</div>
-}
-
-function CardBody({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <div className={cn("p-6", className)}>{children}</div>
-}
-
-function CardFooter({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <div className={cn("flex items-center gap-3 border-t border-border px-6 py-4", className)}>{children}</div>
-}
-
-function CardTitle({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <h3 className={cn("text-base font-semibold text-foreground leading-tight", className)}>{children}</h3>
-}
-
-function CardDescription({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <p className={cn("text-sm text-muted-foreground", className)}>{children}</p>
-}
 
 // ─── Code examples ────────────────────────────────────────────────────────────
 
-const reactCode = `import {
+const shadcnCode = `// Install: npx shadcn@latest add card
+
+import {
   Card,
   CardContent,
   CardDescription,
@@ -84,11 +44,18 @@ import { Button } from "@/components/ui/button"
   </CardFooter>
 </Card>
 
+// Variant examples — variant prop added by this design system
+<Card variant="elevated">...</Card>
+<Card variant="outlined">...</Card>
+<Card variant="ghost">...</Card>
+
 // Interactive card (clickable)
 <Card
-  className="w-80 cursor-pointer transition-shadow hover:shadow-elevation-3"
+  variant="default"
+  interactive
   role="button"
   tabIndex={0}
+  className="w-80 cursor-pointer"
 >
   <CardContent className="pt-6">
     <p className="font-semibold">Click me</p>
@@ -129,28 +96,6 @@ const tailwindCode = `{/* Default card */}
   ...
 </div>`
 
-const shadcnInstall = `# Install card component
-npx shadcn@latest add card
-
-# Usage
-import {
-  Card, CardContent, CardDescription,
-  CardFooter, CardHeader, CardTitle,
-} from "@/components/ui/card"
-
-<Card>
-  <CardHeader>
-    <CardTitle>Project Overview</CardTitle>
-    <CardDescription>A high-level summary of the project.</CardDescription>
-  </CardHeader>
-  <CardContent>
-    <p>Content here.</p>
-  </CardContent>
-  <CardFooter>
-    <Button>View Details</Button>
-  </CardFooter>
-</Card>`
-
 // ─── CardPage ─────────────────────────────────────────────────────────────────
 
 export default function CardPage() {
@@ -163,11 +108,38 @@ export default function CardPage() {
       tags={["shadcn/ui", "Layout", "Container"]}
     >
       <InfoGrid items={[
-        { label: "Variants",  value: "4 (default / elevated / outlined / ghost)" },
-        { label: "Anatomy",   value: "Header · Body · Footer"                    },
-        { label: "WCAG",      value: "AA 2.2"                                    },
-        { label: "Responsive", value: "Yes"                                      },
+        { label: "Variants",   value: "4 (default / elevated / outlined / ghost)" },
+        { label: "Anatomy",    value: "Header · Body · Footer"                    },
+        { label: "WCAG",       value: "AA 2.2"                                    },
+        { label: "Responsive", value: "Yes"                                       },
       ]} />
+
+      {/* Component API */}
+      <Section title="Component API">
+        <div className="rounded-xl border border-border overflow-hidden text-sm">
+          <div className="bg-neutral-50 dark:bg-neutral-900 px-5 py-3 border-b border-border font-mono text-xs text-muted-foreground">
+            {"import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from \"@/components/ui/card\""}
+          </div>
+          <div className="flex gap-4 border-b border-border px-5 py-3">
+            <code className="w-20 shrink-0 font-mono text-xs text-primary">variant</code>
+            <code className="flex-1 min-w-0 font-mono text-xs text-muted-foreground hidden sm:block">"default" | "elevated" | "outlined" | "ghost"</code>
+            <code className="w-24 shrink-0 font-mono text-xs text-muted-foreground hidden md:block">"default"</code>
+            <p className="w-64 shrink-0 text-muted-foreground text-xs leading-relaxed hidden lg:block">Visual style — controls border, shadow, and background</p>
+          </div>
+          <div className="flex gap-4 border-b border-border px-5 py-3">
+            <code className="w-20 shrink-0 font-mono text-xs text-primary">interactive</code>
+            <code className="flex-1 min-w-0 font-mono text-xs text-muted-foreground hidden sm:block">boolean</code>
+            <code className="w-24 shrink-0 font-mono text-xs text-muted-foreground hidden md:block">false</code>
+            <p className="w-64 shrink-0 text-muted-foreground text-xs leading-relaxed hidden lg:block">Adds hover shadow + focus ring. Combine with role/tabIndex</p>
+          </div>
+          <div className="flex gap-4 px-5 py-3">
+            <code className="w-20 shrink-0 font-mono text-xs text-primary">className</code>
+            <code className="flex-1 min-w-0 font-mono text-xs text-muted-foreground hidden sm:block">string</code>
+            <code className="w-24 shrink-0 font-mono text-xs text-muted-foreground hidden md:block">—</code>
+            <p className="w-64 shrink-0 text-muted-foreground text-xs leading-relaxed hidden lg:block">Extend or override Tailwind classes on any sub-component</p>
+          </div>
+        </div>
+      </Section>
 
       {/* Overview */}
       <Section title="Overview">
@@ -181,145 +153,193 @@ export default function CardPage() {
             <div className="rounded-xl border border-success/20 bg-success/5 p-4">
               <p className="font-semibold text-foreground mb-2 text-xs uppercase tracking-wide">When to Use</p>
               <ul className="space-y-1.5">
-                {["Product listings, project boards", "Profile summaries, user details", "Settings panels with multiple fields", "Dashboard stats or KPI tiles", "Article / content previews"].map((i) => (
-                  <li key={i} className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-success" />{i}</li>
-                ))}
+                <li className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-success" />Product listings, project boards</li>
+                <li className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-success" />Profile summaries, user details</li>
+                <li className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-success" />Settings panels with multiple fields</li>
+                <li className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-success" />Dashboard stats or KPI tiles</li>
+                <li className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-success" />Article / content previews</li>
               </ul>
             </div>
             <div className="rounded-xl border border-warning/20 bg-warning/5 p-4">
               <p className="font-semibold text-foreground mb-2 text-xs uppercase tracking-wide">When NOT to Use</p>
               <ul className="space-y-1.5">
-                {["Simple text content without actions — use plain layout", "Table rows — cards are not substitutes for data tables", "Full-page dialogs — use Dialog or Sheet", "Overloading a single card with too many actions"].map((i) => (
-                  <li key={i} className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-warning" />{i}</li>
-                ))}
+                <li className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-warning" />Simple text content without actions — use plain layout</li>
+                <li className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-warning" />Table rows — cards are not substitutes for data tables</li>
+                <li className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-warning" />Full-page dialogs — use Dialog or Sheet</li>
+                <li className="flex items-start gap-2"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-warning" />Overloading a single card with too many actions</li>
               </ul>
             </div>
           </div>
         </div>
       </Section>
 
-      {/* Preview */}
-      <Section title="Preview">
-        <PreviewBox layout="stack">
+      <hr className="border-border" />
 
-          {/* Full anatomy */}
-          <PreviewRow label="Full anatomy (Header + Body + Footer)">
-            <Card className="w-full max-w-sm">
-              <CardHeader>
-                <CardTitle>Account Settings</CardTitle>
-                <CardDescription>Manage your account preferences.</CardDescription>
-              </CardHeader>
-              <CardBody>
-                <p className="text-sm text-muted-foreground">Update your profile, change your password, and configure notifications.</p>
-              </CardBody>
-              <CardFooter>
-                <button className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-surface-hover">Cancel</button>
-                <button className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-dark ml-auto">Save Changes</button>
-              </CardFooter>
-            </Card>
-          </PreviewRow>
+      {/* ── Anatomy & Variants ──────────────────────────────────────────────────── */}
+      <div className="rounded-xl bg-background dark:bg-card shadow-elevation-3 overflow-hidden">
+        <div className="px-6 py-4 border-b border-border">
+          <div className="border-l-4 border-warning pl-4 space-y-1">
+            <h3 className="text-base font-semibold text-foreground">Anatomy &amp; Variants</h3>
+            <p className="text-sm text-muted-foreground">Core card structure with header, body, and footer — plus the four visual style variants.</p>
+          </div>
+        </div>
+        <div className="p-6">
+          <div className="grid lg:grid-cols-2 gap-6 items-start">
+            <div className="rounded-lg bg-neutral-100 dark:bg-neutral-800/50 divide-y divide-border overflow-hidden">
 
-          {/* Variants */}
-          <PreviewRow label="Variants">
-            <div className="grid sm:grid-cols-2 gap-4 w-full">
-              {(["default", "elevated", "outlined", "ghost"] as const).map((v) => (
-                <Card key={v} variant={v} className="p-5">
-                  <p className="text-xs font-mono text-muted-foreground capitalize mb-1">{v}</p>
-                  <p className="text-sm font-medium text-foreground">Card variant</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Brief description of contents here.</p>
+              {/* Full anatomy */}
+              <div className="px-4 py-4">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Full anatomy (Header + Body + Footer)</p>
+                <Card className="w-full max-w-sm">
+                  <CardHeader className="pb-0 space-y-0 gap-1">
+                    <CardTitle className="text-base text-foreground leading-tight">Account Settings</CardTitle>
+                    <CardDescription>Manage your account preferences.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-6">
+                    <p className="text-sm text-muted-foreground">Update your profile, change your password, and configure notifications.</p>
+                  </CardContent>
+                  <CardFooter className="gap-3 border-t border-border py-4">
+                    <Button variant="outline">Cancel</Button>
+                    <Button className="ml-auto">Save Changes</Button>
+                  </CardFooter>
                 </Card>
-              ))}
-            </div>
-          </PreviewRow>
-
-          {/* Interactive */}
-          <PreviewRow label="Interactive card">
-            <Card variant="default" interactive className="w-full max-w-sm p-5 group">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm font-semibold text-foreground">Project Alpha</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Last updated 2 hours ago</p>
-                </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
               </div>
-            </Card>
-          </PreviewRow>
 
-          {/* Media card */}
-          <PreviewRow label="Card with image area + metadata">
-            <Card className="w-full max-w-sm overflow-hidden">
-              <div className="h-36 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                <Star className="h-10 w-10 text-primary/40" />
-              </div>
-              <CardHeader className="pt-5">
-                <CardTitle>Design Tokens Guide</CardTitle>
-                <CardDescription>Learn how to use and extend the token system.</CardDescription>
-              </CardHeader>
-              <CardBody className="pt-3 pb-3">
-                <div className="flex flex-wrap gap-2">
-                  {["Design", "Tokens", "Tailwind"].map((tag) => (
-                    <span key={tag} className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-                      <Tag className="h-2.5 w-2.5" />{tag}
-                    </span>
+              {/* Variants */}
+              <div className="px-4 py-4">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Variants</p>
+                <div className="grid sm:grid-cols-2 gap-4 w-full">
+                  {(["default", "elevated", "outlined", "ghost"] as const).map((v) => (
+                    <Card key={v} variant={v} className="p-5">
+                      <p className="text-xs font-mono text-muted-foreground capitalize mb-1">{v}</p>
+                      <p className="text-sm font-medium text-foreground">Card variant</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">Brief description of contents here.</p>
+                    </Card>
                   ))}
                 </div>
-              </CardBody>
-              <CardFooter>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <User className="h-3.5 w-3.5" />Design Team
-                </div>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground ml-auto">
-                  <Calendar className="h-3.5 w-3.5" />Jun 17, 2026
-                </div>
-              </CardFooter>
-            </Card>
-          </PreviewRow>
-
-          {/* Stat card */}
-          <PreviewRow label="KPI / Stat cards">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full">
-              {[
-                { label: "Total Users",    value: "12,847",  delta: "+5.2%", positive: true  },
-                { label: "Monthly Revenue", value: "$84,921", delta: "+12%",  positive: true  },
-                { label: "Churn Rate",     value: "2.1%",    delta: "+0.3%", positive: false },
-                { label: "NPS Score",      value: "72",      delta: "+4",    positive: true  },
-              ].map(({ label, value, delta, positive }) => (
-                <Card key={label} className="p-5">
-                  <p className="text-xs text-muted-foreground">{label}</p>
-                  <p className="text-2xl font-bold text-foreground mt-1">{value}</p>
-                  <p className={cn("text-xs font-medium mt-1", positive ? "text-success" : "text-error")}>{delta}</p>
-                </Card>
-              ))}
-            </div>
-          </PreviewRow>
-
-          {/* Context menu card */}
-          <PreviewRow label="Card with action menu">
-            <Card className="w-full max-w-sm p-5">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm font-semibold text-foreground">Team Report — Q2 2026</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Generated Jun 17, 2026</p>
-                </div>
-                <button className="rounded-md p-1 text-muted-foreground hover:bg-surface-hover hover:text-foreground transition-colors" aria-label="More options">
-                  <MoreHorizontal className="h-4 w-4" />
-                </button>
               </div>
-              <p className="mt-3 text-sm text-muted-foreground">Summary of all Q2 team metrics, goal completion, and highlights.</p>
-            </Card>
-          </PreviewRow>
 
-        </PreviewBox>
-      </Section>
+            </div>
+            <div className="sticky top-6">
+              <CodeTabs tabs={[
+                { label: "shadcn/ui", code: shadcnCode,   language: "tsx" },
+                { label: "Tailwind",  code: tailwindCode, language: "tsx" },
+              ]} />
+            </div>
+          </div>
+        </div>
+      </div>
 
-      {/* Code Examples */}
-      <Section title="Code Examples">
-        <CodeTabs tabs={[
-          { label: "React",     code: reactCode,     language: "tsx"  },
-          { label: "Tailwind",  code: tailwindCode,  language: "tsx"  },
-          { label: "shadcn/ui", code: shadcnInstall, language: "bash" },
-        ]} />
-      </Section>
+      {/* ── Compositions ────────────────────────────────────────────────────────── */}
+      <div className="rounded-xl bg-background dark:bg-card shadow-elevation-3 overflow-hidden">
+        <div className="px-6 py-4 border-b border-border">
+          <div className="border-l-4 border-warning pl-4 space-y-1">
+            <h3 className="text-base font-semibold text-foreground">Compositions</h3>
+            <p className="text-sm text-muted-foreground">Common patterns — interactive cards, media cards, KPI tiles, and action menus.</p>
+          </div>
+        </div>
+        <div className="p-6">
+          <div className="grid lg:grid-cols-2 gap-6 items-start">
+            <div className="rounded-lg bg-neutral-100 dark:bg-neutral-800/50 divide-y divide-border overflow-hidden">
+
+              {/* Interactive */}
+              <div className="px-4 py-4">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Interactive card</p>
+                <Card
+                  variant="default"
+                  interactive
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") e.currentTarget.click() }}
+                  className="w-full max-w-sm p-5 group"
+                >
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">Project Alpha</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">Last updated 2 hours ago</p>
+                    </div>
+                    <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  </div>
+                </Card>
+              </div>
+
+              {/* Media card */}
+              <div className="px-4 py-4">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Card with image + metadata</p>
+                <Card className="w-full max-w-sm overflow-hidden">
+                  <div className="h-36 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+                    <Star className="h-10 w-10 text-primary/40" />
+                  </div>
+                  <CardHeader className="pb-0 space-y-0 gap-1 pt-5">
+                    <CardTitle className="text-base text-foreground leading-tight">Design Tokens Guide</CardTitle>
+                    <CardDescription>Learn how to use and extend the token system.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-3 pb-3">
+                    <div className="flex flex-wrap gap-2">
+                      {["Design", "Tokens", "Tailwind"].map((tag) => (
+                        <span key={tag} className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+                          <Tag className="h-2.5 w-2.5" />{tag}
+                        </span>
+                      ))}
+                    </div>
+                  </CardContent>
+                  <CardFooter className="gap-3 border-t border-border py-4">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <User className="h-3.5 w-3.5" />Design Team
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground ml-auto">
+                      <Calendar className="h-3.5 w-3.5" />Jun 17, 2026
+                    </div>
+                  </CardFooter>
+                </Card>
+              </div>
+
+              {/* Stat cards */}
+              <div className="px-4 py-4">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">KPI / Stat cards</p>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full">
+                  {[
+                    { label: "Total Users",     value: "12,847",  delta: "+5.2%", positive: true  },
+                    { label: "Monthly Revenue", value: "$84,921", delta: "+12%",  positive: true  },
+                    { label: "Churn Rate",      value: "2.1%",    delta: "+0.3%", positive: false },
+                    { label: "NPS Score",       value: "72",      delta: "+4",    positive: true  },
+                  ].map(({ label, value, delta, positive }) => (
+                    <Card key={label} className="p-5">
+                      <p className="text-xs text-muted-foreground">{label}</p>
+                      <p className="text-2xl font-bold text-foreground mt-1">{value}</p>
+                      <p className={cn("text-xs font-medium mt-1", positive ? "text-success" : "text-error")}>{delta}</p>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+
+              {/* Action menu card */}
+              <div className="px-4 py-4">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Card with action menu</p>
+                <Card className="w-full max-w-sm p-5">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">Team Report — Q2 2026</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">Generated Jun 17, 2026</p>
+                    </div>
+                    <Button variant="ghost" size="icon" aria-label="More options" className="h-8 w-8 text-muted-foreground">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <p className="mt-3 text-sm text-muted-foreground">Summary of all Q2 team metrics, goal completion, and highlights.</p>
+                </Card>
+              </div>
+
+            </div>
+            <div className="sticky top-6">
+              <CodeTabs tabs={[
+                { label: "shadcn/ui", code: shadcnCode,   language: "tsx" },
+                { label: "Tailwind",  code: tailwindCode, language: "tsx" },
+              ]} />
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Variant Reference */}
       <Section title="Variant Reference">
@@ -356,16 +376,34 @@ export default function CardPage() {
         />
       </Section>
 
-      {/* Props */}
-      <Section title="Props" description="shadcn/ui Card uses composable sub-components.">
+      {/* Keyboard & Accessibility */}
+      <Section title="Keyboard &amp; Accessibility">
+        <KeyboardTable rows={[
+          { keys: ["Tab"],            action: "Move focus to an interactive card" },
+          { keys: ["Enter", "Space"], action: "Activate an interactive card (role='button')" },
+          { keys: ["Shift+Tab"],      action: "Move focus away from the card" },
+        ]} />
+        <div className="mt-4 rounded-xl border border-border p-5 space-y-3 text-sm">
+          <p className="font-semibold text-foreground">ARIA &amp; semantic notes</p>
+          <ul className="space-y-2 text-muted-foreground">
+            <li className="flex gap-2"><code className="shrink-0 font-mono text-primary">role="button"</code><span>Add to interactive cards along with tabIndex={"{0}"}.</span></li>
+            <li className="flex gap-2"><code className="shrink-0 font-mono text-primary">aria-label</code><span>Add a descriptive label to interactive cards so screen reader users know what the card does.</span></li>
+            <li className="flex gap-2"><code className="shrink-0 font-mono text-primary">focus-visible</code><span>The interactive prop adds a visible focus ring. Never suppress it.</span></li>
+          </ul>
+        </div>
+      </Section>
+
+      {/* All Props */}
+      <Section title="All Props" description="shadcn/ui Card uses composable sub-components.">
         <PropsTable props={[
-          { name: "Card",            type: "div props",  default: "—",     description: "Root container. Accepts className for variant overrides." },
-          { name: "CardHeader",      type: "div props",  default: "—",     description: "Contains CardTitle and CardDescription." },
-          { name: "CardTitle",       type: "h3 props",   default: "—",     description: "Card heading — rendered as h3 for semantics." },
-          { name: "CardDescription", type: "p props",    default: "—",     description: "Subtitle text below the title." },
-          { name: "CardContent",     type: "div props",  default: "—",     description: "Main body of the card." },
-          { name: "CardFooter",      type: "div props",  default: "—",     description: "Action row at the bottom with a top border." },
-          { name: "className",       type: "string",     default: "—",     description: "Extend or override Tailwind classes on any sub-component." },
+          { name: "Card (variant)",     type: '"default" | "elevated" | "outlined" | "ghost"', default: '"default"', description: "Visual style — controls border, shadow, and background."  },
+          { name: "Card (interactive)", type: "boolean",    default: "false", description: "Adds hover shadow + focus ring styles. Combine with role/tabIndex for accessibility." },
+          { name: "CardHeader",         type: "div props",  default: "—",     description: "Contains CardTitle and CardDescription." },
+          { name: "CardTitle",          type: "div props",  default: "—",     description: "Card heading." },
+          { name: "CardDescription",    type: "div props",  default: "—",     description: "Subtitle text below the title." },
+          { name: "CardContent",        type: "div props",  default: "—",     description: "Main body — use className=\"pt-6\" when header is present." },
+          { name: "CardFooter",         type: "div props",  default: "—",     description: "Action row at the bottom." },
+          { name: "className",          type: "string",     default: "—",     description: "Extend or override Tailwind classes on any sub-component." },
         ]} />
       </Section>
     </ComponentLayout>
